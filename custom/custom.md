@@ -5,12 +5,14 @@
 vendor:
 
 ```bash
+# pwd: kubernetes
 make vendor
 ```
 
 compile:
 
 ```bash
+# pwd: kubernetes
 make WHAT=cmd/kube-scheduler
 ```
 
@@ -27,5 +29,10 @@ ENTRYPOINT ["/usr/local/bin/kube-scheduler"]
 build
 
 ```bash
-docker build -f Dockerfile -t <repo>/kube-scheduler:custom-1.35 .
+# pwd: kubernetes
+
+docker build -f Dockerfile -t kube-scheduler:custom-1.35 .
+
+# Or:
+# docker build -f Dockerfile -t <repo>/kube-scheduler:custom-1.35 .
 ```

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: custom-scheduler
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: custom-scheduler
+  template:
+    metadata:
+      labels:
+        app: custom-scheduler
+    spec:
+      serviceAccountName: custom-scheduler
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      containers:
+      - name: custom-scheduler
+        image: <repo>/kube-scheduler:custom-1.35
+        imagePullPolicy: IfNotPresent
+        command: ["/usr/local/bin/kube-scheduler"]
+        args:
+        - --config=/etc/kubernetes/scheduler-config.yaml
+        - --v=4
+        volumeMounts:
+        - name: config
+          mountPath: /etc/kubernetes/scheduler-config.yaml
+          subPath: scheduler-config.yaml
+          readOnly: true
+        - name: kubeconfig
+          mountPath: /etc/kubernetes/scheduler.conf
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: custom-scheduler-config
+      - name: kubeconfig
+        hostPath:
+          path: /etc/kubernetes/scheduler.conf
+          type: File

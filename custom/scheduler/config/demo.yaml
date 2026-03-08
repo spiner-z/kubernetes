@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: custom-scheduler-demo-pod
+spec:
+  schedulerName: custom-scheduler
+  containers:
+  - name: nginx
+    image: docker.io/nginx:alpine
+    resources:
+      requests:
+        cpu: 500m
+        memory: 256Mi
